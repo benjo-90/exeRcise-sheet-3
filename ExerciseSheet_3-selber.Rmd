@@ -270,6 +270,68 @@ Thus, given the provided data, the increase in mean height was largest in South 
 f)  Create a meaningful plot / figure with the dataset. Make sure to
     provide a figure caption (via the chunk options / Rmarkdown) and
     correctly label the figure.
+    
+    Plot only countries with the 10 highest and 10 lowest increases in mean height:
+    
+```{r}
+heightDataRedFemale <- heightData %>% 
+  select(country, relIncreaseFemalePercent) %>% 
+  arrange(desc(relIncreaseFemalePercent)) %>% 
+  slice(c(1:10, (n()-9):n()))
+
+heightDataRedMale <- heightData %>% 
+  select(country, relIncreaseMalePercent) %>% 
+  arrange(desc(relIncreaseMalePercent)) %>% 
+  slice(c(1:10, (n()-9):n()))
+```
+   
+```{r, fig.cap="10 countries with the largest/smallest increase in mean height for women (1896 vs. 1996)", fig.align='left'}
+heightDataRedFemale %>% 
+  ggplot(
+    aes(
+      x=reorder(country, relIncreaseFemalePercent),
+      y=relIncreaseFemalePercent)
+  ) +
+  scale_y_continuous(breaks = seq(0, 15, by = 1)) +
+  geom_segment( aes(x=country, xend=country, y=0, yend=relIncreaseFemalePercent), color="skyblue") +
+  geom_point( color="blue", size=3, alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+  labs(
+    x ="",
+    y = "Relative increase in mean height of women in %",
+    caption="NCD RisC, Human Height (2017)"
+  )
+```
+```{r, fig.cap="10 countries with the largest/smallest increase in mean height for men (1896 vs. 1996)", fig.align='left'}
+heightDataRedMale %>% 
+  ggplot(
+    aes(
+      x=reorder(country, relIncreaseMalePercent),
+      y=relIncreaseMalePercent)
+  ) +
+  scale_y_continuous(breaks = seq(0, 12, by = 1)) +
+  geom_segment( aes(x=country, xend=country, y=0, yend=relIncreaseMalePercent), color="skyblue") +
+  geom_point( color="blue", size=3, alpha=0.6) +
+  theme_light() +
+  coord_flip() + 
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+  labs(
+    x ="",
+    y = "Relative increase in mean height of men in %",
+    caption="NCD RisC, Human Height (2017)"
+  )
+```
+    
 
 ## Final Note
 
