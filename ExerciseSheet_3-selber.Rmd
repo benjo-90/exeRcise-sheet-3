@@ -88,6 +88,34 @@ b)  Load the data for both years into R. Check the type of the count
     not numeric? Fix the problem in an appropriate manner, it is OK if
     some of the counts are inaccurate because of this. Explain your
     solution and the repercussions.
+    
+    ```{r}
+library(tidyverse)
+```
+    
+```{r}
+vornamen2022 <- read.csv("vornamen-muenchen-2022.csv")
+vornamen2023 <- read.csv("vornamen-muenchen-2023.csv")
+
+class(vornamen2022$Anzahl)
+```
+Column "Anzahl" is of type character and not numeric because there is one category called "4 oder weniger".
+
+Since this category is the one problematic one when trying a simple conversion from character to numeric, we could do the following:
+
+```{r}
+vornamen2022 <- vornamen2022 %>% mutate(
+  Anzahl = ifelse(Anzahl == "4 oder weniger", 4, as.numeric(Anzahl))
+)
+
+vornamen2023 <- vornamen2023 %>% mutate(
+  Anzahl = ifelse(Anzahl == "4 oder weniger", 4, as.numeric(Anzahl))
+)
+
+vornamen2022 %>% slice(c(1,2, n(), n()-1))
+```
+
+By doing this, some information for entries with an Anzahl of 4 is lost. Before and now we could not discriminate between 1, 2, 3 or 4 counts but now one could assume that a certain name with count 4 appeared as often another certain name with count 4, which is not necessarily true. Need to keep that in mind. 
 
 c)  Calculate the total number of babies born in Munich in 2022
     and 2023. Which year had the bigger baby-boom?
