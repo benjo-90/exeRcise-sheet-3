@@ -89,7 +89,7 @@ b)  Load the data for both years into R. Check the type of the count
     some of the counts are inaccurate because of this. Explain your
     solution and the repercussions.
     
-    ```{r}
+```{r}
 library(tidyverse)
 ```
     
@@ -119,6 +119,18 @@ By doing this, some information for entries with an Anzahl of 4 is lost. Before 
 
 c)  Calculate the total number of babies born in Munich in 2022
     and 2023. Which year had the bigger baby-boom?
+    
+A simple approach would be to treat all Anzahl's with 4 as actually being 4:
+    
+```{r}
+newborns2022max <- sum(vornamen2022$Anzahl)
+newborns2023max <- sum(vornamen2023$Anzahl)
+
+print(newborns2022max)
+print(newborns2023max)
+```
+In this case, 2022 had the bigger baby boom (about `r round(((newborns2022max/newborns2023max)-1)*100)`% higher than in 2023). But since Vornamen with Anzahl of 4 dominate both datasets, this answer is not very reliable.
+
 
 d)  Add a new column `year` to both datasets which holds the correct
     year for each.
