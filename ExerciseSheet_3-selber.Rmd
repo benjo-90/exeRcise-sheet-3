@@ -195,6 +195,78 @@ d)  Come up with a (research) question you want to answer with the data
     Which countries had the largest relative increase in mean height of women and men over a   century? Would like to see if in the far future people of some countries may appear like giants :-)
     
 e)  Use R to answer your chosen question.
+
+```{r}
+heightData <- read.csv("Human Height - NCD RisC (2017).csv")
+
+heightData %>% head(3)
+```
+
+Select and rename needed columns:
+
+```{r}
+heightData <- heightData %>% 
+  select(1:4) %>% 
+  rename(
+    country = Entity,
+    year = Year,
+    meanMaleHeightCm = Mean.male.height..cm.,
+    meanFemaleHeightCm = Mean.female.height..cm.
+  )
+
+heightData %>% head(3)
+```
+
+Keep only entries from years 1896 and 1996:
+
+```{r}
+heightData <- heightData %>% 
+  filter(year == 1896 | year == 1996)
+
+heightData %>% head(4)
+```
+
+Use pivot_wider() to obtain one entry per country:
+
+```{r}
+heightData <- heightData %>%
+  pivot_wider(
+    id_cols = country,
+    names_from = year,
+    values_from = c(meanMaleHeightCm, meanFemaleHeightCm),
+    names_sep = "") %>% 
+  mutate(
+    relIncreaseMalePercent = ((meanMaleHeightCm1996/meanMaleHeightCm1896)-1)*100,
+    relIncreaseFemalePercent = ((meanFemaleHeightCm1996/meanFemaleHeightCm1896)-1)*100
+  )
+```
+
+```{r}
+heightData %>% 
+  head(3) %>% 
+  select(country, meanFemaleHeightCm1896, meanFemaleHeightCm1996, relIncreaseFemalePercent)
+```
+
+Show results:
+
+```{r}
+heightData %>% 
+  select(country, meanFemaleHeightCm1896, meanFemaleHeightCm1996, relIncreaseFemalePercent) %>% 
+  arrange(desc(relIncreaseFemalePercent)) %>% 
+  head(5) %>% 
+  knitr::kable(caption="Top 5 countries with largest increase in mean height for women (1896 vs. 1996)")
+```
+```{r}
+heightData %>% 
+  select(country, meanMaleHeightCm1896, meanMaleHeightCm1996, relIncreaseMalePercent) %>% 
+  arrange(desc(relIncreaseMalePercent)) %>% 
+  head(5) %>% 
+  knitr::kable(caption="Top 5 countries with largest increase in mean height for men (1896 vs. 1996)")
+```
+
+Thus, given the provided data, the increase in mean height was largest in South Korea/Iran for women/men
+
+
 f)  Create a meaningful plot / figure with the dataset. Make sure to
     provide a figure caption (via the chunk options / Rmarkdown) and
     correctly label the figure.
